@@ -7,7 +7,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 import logging
 
-logger = logging.getLogger('quant')
+logging.basicConfig()
+logger = logging.getLogger('quandl_quote')
 matplotlib.style.use('ggplot')
 
 
