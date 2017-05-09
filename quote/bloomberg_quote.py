@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
@@ -6,7 +6,7 @@ import json
 import requests
 import logging
 
-logging.basicConfig()
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('bloomberg_quote')
 
 
@@ -73,6 +73,8 @@ class NoBloombergDataException(Exception):
     pass
 
 if __name__ == '__main__':
+    logging.getLogger("requests").setLevel(logging.WARNING)
+
     ticker_types = [
         ('5', 'HK'),
         ('2388', 'HK'),
@@ -89,10 +91,9 @@ if __name__ == '__main__':
     for item in ticker_types:
         try:
             bloomberg_quote = BloombergQuote(*item)
-            print(bloomberg_quote.ticker, bloomberg_quote.security_type)
+            logger.info('{0}:{1}'.format(bloomberg_quote.ticker, bloomberg_quote.security_type))
             bloomberg_quote.request()
-            print(bloomberg_quote.last_price)
-            print()
+            logger.info(bloomberg_quote.last_price)
         except NoBloombergDataException:
             logger.error('No Bloomberg data')
         except Exception as e:

@@ -7,7 +7,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import logging
 
-logging.basicConfig()
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('quandl_quote')
 matplotlib.style.use('ggplot')
 
@@ -15,6 +15,9 @@ matplotlib.style.use('ggplot')
 class QuandlQuote(object):
     def __init__(self, ticker):
         self.ticker = ticker
+        self.df = None
+
+    def request(self):
         self.df = self.request_df()
 
     def request_df(self):
@@ -32,6 +35,8 @@ class QuandlQuote(object):
             logger.error('No data available')
 
 if __name__ == '__main__':
+    logging.getLogger("requests").setLevel(logging.WARNING)
+
     tickers = [
         'CBOE/VIX',  # Volatility Index
         'CBOE/VXO',  # S&P 100 Volatility Index
@@ -41,6 +46,8 @@ if __name__ == '__main__':
 
     for ticker in tickers:
         quandl_quote = QuandlQuote(ticker)
+        logger.info(quandl_quote.ticker)
+        quandl_quote.request()
         quandl_quote.plot()
 
     plt.show()
