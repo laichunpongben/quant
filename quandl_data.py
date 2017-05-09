@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import logging
 
 logger = logging.getLogger('quant')
+matplotlib.style.use('ggplot')
 
 
 class QuandlData(object):
@@ -20,14 +21,21 @@ class QuandlData(object):
 
     def plot(self):
         if self.df is not None:
-            matplotlib.style.use('ggplot')
             self.df.plot()
             plt.title(self.ticker)
-            plt.show()
         else:
             logger.error('No data available')
 
 if __name__ == '__main__':
-    ticker = 'CBOE/VIX'
-    quandl_data = QuandlData(ticker)
-    quandl_data.plot()
+    tickers = [
+        'CBOE/VIX',  # Volatility Index
+        'CBOE/VXO',  # S&P 100 Volatility Index
+        'CBOE/VXN',  # Nasdaq Volatility Index
+        'CBOE/VXD',  # DJIA Volatility Index
+    ]
+
+    for ticker in tickers:
+        quandl_data = QuandlData(ticker)
+        quandl_data.plot()
+
+    plt.show()
