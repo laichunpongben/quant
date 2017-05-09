@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from __future__ import print_function
 import quandl
 import matplotlib
 import matplotlib.pyplot as plt
@@ -7,7 +11,7 @@ logger = logging.getLogger('quant')
 matplotlib.style.use('ggplot')
 
 
-class QuandlData(object):
+class QuandlQuote(object):
     def __init__(self, ticker):
         self.ticker = ticker
         self.df = self.request_df()
@@ -35,7 +39,7 @@ if __name__ == '__main__':
     ]
 
     for ticker in tickers:
-        quandl_data = QuandlData(ticker)
-        quandl_data.plot()
+        quandl_quote = QuandlQuote(ticker)
+        quandl_quote.plot()
 
     plt.show()
