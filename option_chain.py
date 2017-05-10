@@ -28,9 +28,9 @@ class OptionChain(object):
 
     def make_calls(self):
         for c in self.quote.data_json['calls']:
-            price = float(c['a'])
+            price = float(c['a'].replace(',', ''))
             s = self.equity_price
-            k = float(c['strike'])
+            k = float(c['strike'].replace(',', ''))
             r = self.risk_free_rate
             t = 37/252
             option_type = 'call'
@@ -41,9 +41,9 @@ class OptionChain(object):
 
     def make_puts(self):
         for p in self.quote.data_json['puts']:
-            price = float(p['a'])
+            price = float(p['a'].replace(',', ''))
             s = self.equity_price
-            k = float(p['strike'])
+            k = float(p['strike'].replace(',', ''))
             r = self.risk_free_rate
             t = 37/252
             option_type = 'put'
