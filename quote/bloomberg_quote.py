@@ -31,6 +31,9 @@ class BloombergQuote(object):
         try:
             response = requests.get(quote_url)
             return response.json()
+        except ValueError:  # json.decoder.JSONDecodeError in Python3
+            logger.error('Invalid json')
+            return None
         except Exception as e:
             logger.exception('Failed to download data')
             return None
@@ -39,7 +42,7 @@ class BloombergQuote(object):
         if self.data_json:
             try:
                 return self.data_json['priceTimeSeries'][-1]['lastPrice']
-            except KeyError, TypeError:
+            except (KeyError, TypeError):
                 logger.exception('Invalid json')
                 return self.get_prev_close()
         else:
@@ -50,7 +53,7 @@ class BloombergQuote(object):
         if self.data_json:
             try:
                 return self.data_json['priceTimeSeries'][-1]['previousClosingPriceOneTradingDayAgo']
-            except KeyError, TypeError:
+            except (KeyError, TypeError):
                 logger.exception('Invalid json')
                 raise NoBloombergDataException
         else:
