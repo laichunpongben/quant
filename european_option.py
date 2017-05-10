@@ -4,6 +4,7 @@
 from __future__ import print_function, division
 import math
 from scipy.stats import norm
+from scipy.optimize import brentq
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -40,23 +41,18 @@ class EuropeanOption(object):
         return self.s * math.sqrt(self.t) * self.calc_normal_first_derivative(self.d1(sigma))
 
     def estimate_implied_volatility_closed_form(self):
+        '''Accurate only when at the money'''
         return math.sqrt(2 * math.pi / self.t) * self.price / self.s
 
-    def estimate_implied_volatility_iteratively(self):
-        for _ in range(100):
-            vega = self.calc_vega(self.implied_volatility)
-            if abs(vega) < 0.0001:
-                break
+    def estimate_implied_volatility_dekker_brent(self):
+        lower_bound = -1.0
+        upper_bound = 1.0
+        if self.option_type == 'call':
+            f = lambda sigma: self.calc_black_scholes_call_price(sigma) - self.price
+        else:
+            f = lambda sigma: self.calc_black_scholes_put_price(sigma) - self.price
 
-            if self.option_type == 'call':
-                price = self.calc_black_scholes_call_price(self.implied_volatility)
-            else:
-                price = self.calc_black_scholes_put_price(self.implied_volatility)
-
-            if self.implied_volatility - (price - self.price) / vega > 0:
-                self.implied_volatility += -(price - self.price) / vega
-            else:
-                break
+        self.implied_volatility = brentq(f, lower_bound, upper_bound)
 
 if __name__ == '__main__':
     test_cases = [
@@ -75,5 +71,5 @@ if __name__ == '__main__':
     for test_case in test_cases:
         european_option = EuropeanOption(*test_case)
         logger.info('{0} k={1} price={2}'.format(european_option.option_type, european_option.k, european_option.price))
-        european_option.estimate_implied_volatility_iteratively()
-        logger.info('implied_volatility={0}'.format(european_option.implied_volatility))
+        european_option.estimate_implied_volatility_dekker_brent()
+        logger.info('implied_volatility={0:.15f}'.format(european_option.implied_volatility))
