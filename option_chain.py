@@ -63,6 +63,8 @@ class OptionChain(object):
             strikes = [option.k for option in v]
             plt.plot(strikes, implied_volatilities, label=k)
 
+        plt.legend(loc='best')
+
 if __name__ == '__main__':
     ticker = 'AAPL'
     quote_class = GoogleOptionChainQuote
