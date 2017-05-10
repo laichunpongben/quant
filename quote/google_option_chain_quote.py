@@ -28,7 +28,6 @@ class GoogleOptionChainQuote(object):
             response = requests.get(quote_url)
             return response.json()
         except ValueError:  # json.decoder.JSONDecodeError in Python3
-            logger.error('Invalid json')
             return self.add_quotation_mark_to_key(response.text)
         except Exception as e:
             logger.exception('Failed to download data')
