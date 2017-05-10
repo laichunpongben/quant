@@ -4,7 +4,7 @@
 from __future__ import print_function, division
 import math
 from scipy.stats import norm
-from scipy.optimize import brentq
+from scipy.optimize import brentq, newton
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -43,6 +43,14 @@ class EuropeanOption(object):
     def estimate_implied_volatility_closed_form(self):
         '''Accurate only when at the money'''
         return math.sqrt(2 * math.pi / self.t) * self.price / self.s
+
+    def estimate_implied_volatility_newton_raphson(self):
+        if self.option_type == 'call':
+            f = lambda sigma: self.calc_black_scholes_call_price(sigma) - self.price
+        else:
+            f = lambda sigma: self.calc_black_scholes_put_price(sigma) - self.price
+
+        self.implied_volatility = newton(f, self.implied_volatility)
 
     def estimate_implied_volatility_dekker_brent(self):
         lower_bound = -1.0
