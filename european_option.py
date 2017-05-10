@@ -53,14 +53,22 @@ class EuropeanOption(object):
         self.implied_volatility = newton(f, self.implied_volatility)
 
     def estimate_implied_volatility_dekker_brent(self):
-        lower_bound = -1.0
-        upper_bound = 1.0
+        lower_bound = -5.0
+        upper_bound = 5.0
         if self.option_type == 'call':
             f = lambda sigma: self.calc_black_scholes_call_price(sigma) - self.price
         else:
             f = lambda sigma: self.calc_black_scholes_put_price(sigma) - self.price
 
         self.implied_volatility = brentq(f, lower_bound, upper_bound)
+
+    def estimate_implied_volatility(self):
+        try:
+            self.estimate_implied_volatility_dekker_brent()
+        except ValueError:
+            self.estimate_implied_volatility_newton_raphson()
+        except Exception as e:
+            logger.exception('Unhandled exception')
 
 if __name__ == '__main__':
     test_cases = [
@@ -79,5 +87,5 @@ if __name__ == '__main__':
     for test_case in test_cases:
         european_option = EuropeanOption(*test_case)
         logger.info('{0} k={1} price={2}'.format(european_option.option_type, european_option.k, european_option.price))
-        european_option.estimate_implied_volatility_dekker_brent()
+        european_option.estimate_implied_volatility()
         logger.info('implied_volatility={0:.15f}'.format(european_option.implied_volatility))
