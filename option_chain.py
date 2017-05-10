@@ -14,6 +14,7 @@ matplotlib.style.use('ggplot')
 
 class OptionChain(object):
     def __init__(self, ticker, quote_class, equity_price, risk_free_rate=0.0):
+        self.ticker = ticker
         self.quote = quote_class(ticker)
         self.calls = []
         self.puts = []
@@ -53,7 +54,7 @@ class OptionChain(object):
 
     def plot_volatility_smile(self):
         option_dict = {'calls': self.calls, 'puts': self.puts}
-        plt.title('Volatility Smile')
+        plt.title('Volatility Smile: {0} Options'.format(self.ticker))
         plt.xlabel('Strike')
         plt.ylabel('Volatility')
 
